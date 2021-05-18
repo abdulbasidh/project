@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-&jz7j!haz5i8qfhhx)i)!x@94aiy_86)(e$mhd87v*9esxcpbr
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -37,6 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'rest_framework.authtoken',
+    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -67,18 +70,42 @@ TEMPLATES = [
     },
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
+
 WSGI_APPLICATION = 'mainProject.wsgi.application'
 
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+
 DATABASES = {
     'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'JKRzrQec6x',
+        'USER': 'JKRzrQec6x',
+        'PASSWORD': 'FGMTAoFBNj',
+        'HOST': 'remotemysql.com',
+        'PORT': '3306',
+    },
+    'ext': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'JKRzrQec6x',
+        'USER': 'JKRzrQec6x',
+        'PASSWORD': 'FGMTAoFBNj',
+        'HOST': 'remotemysql.com',
+        'PORT': '3306',
+    },
+    'default1': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    },
 }
+
 
 
 # Password validation
@@ -98,6 +125,11 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+AUTHENTICATIONS_BACKENDS = {
+    # "django.contrib.auth.backends.ModelBackend",
+    "accounts.customAuth.Persons"
+}
 
 
 # Internationalization
@@ -123,3 +155,7 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+import dj_database_url
+DATABASES['default']['ENGINE'] = "django.db.backends.mysql"
+DATABASES['ext']['ENGINE'] = "django.db.backends.mysql"
