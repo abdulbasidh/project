@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
+from dbrouter import DbByAppRouter, RestrictMigrations
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -40,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'accounts',
+    'testaccount',
 ]
 
 MIDDLEWARE = [
@@ -82,15 +84,25 @@ WSGI_APPLICATION = 'mainProject.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+DATABASE_ROUTERS = [
+    'dbrouter.DbByAppRouter',
+    'dbrouter.RestrictMigrations',
+]
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'JKRzrQec6x',
-        'USER': 'JKRzrQec6x',
-        'PASSWORD': 'FGMTAoFBNj',
+        'NAME': 'iJovVnBen9',
+        'USER': 'iJovVnBen9',
+        'PASSWORD': 'fDFZRcl3io',
         'HOST': 'remotemysql.com',
         'PORT': '3306',
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
+        },
+        'applications': [
+            'accounts.testaccount',                 #  all models on some_app
+        ]
     },
     'ext': {
         'ENGINE': 'django.db.backends.mysql',
@@ -99,13 +111,18 @@ DATABASES = {
         'PASSWORD': 'FGMTAoFBNj',
         'HOST': 'remotemysql.com',
         'PORT': '3306',
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
+        },
+        'applications': [
+            'accounts.RegisteredFroms',                 #  all models on some_app
+        ]
     },
     'default1': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     },
 }
-
 
 
 # Password validation

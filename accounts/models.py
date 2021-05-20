@@ -4,6 +4,13 @@ from django.contrib.auth.models import BaseUserManager
 from django.contrib.auth.models import AbstractBaseUser, UserManager
 
 
+class RegisteredFroms(models.Model):
+    username = models.CharField(max_length=60)
+    email = models.EmailField(max_length=60)
+    phone_number = models.CharField(max_length=60)
+    password = models.CharField(max_length=60)
+
+
 class User(models.Model):
     username = models.CharField(max_length=60)
     email = models.CharField(max_length=60)
