@@ -1,11 +1,13 @@
 from django.shortcuts import render
 from rest_framework import generics, permissions
 from rest_framework.response import Response
-from .serializers import UserSerializer, PersonsSerializer, FormSerializer
+from .serializers import UserSerializer, PersonsSerializer, FormSerializer, AccountsSerializer, DecrypSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.views import APIView
 from rest_framework import status
-from accounts.models import RegisteredFroms
+from accounts.models import RegisteredFroms, Accounts, Decryp
+import bcrypt
+from Crypto.Cipher import DES3
 
 
 
@@ -73,6 +75,33 @@ class FormRegisterApiView(APIView):
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
+class DecrypApiView(APIView):
+
+    # 1. List all
+    def get(self, request, *args, **kwargs):
+        '''
+        List all the todo items for given requested user
+        '''
+        decryp = Decryp.objects.filter(username = request.user.id)
+        serializer = DecrypSerializer(decryp, many=True, read_only=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    # 2. Create
+    def post(self, request, *args, **kwargs):
+        '''
+        Create the Todo with given todo data
+        '''
+        data = {
+            'username': request.data.get('username'),
+            'password': request.data.get('password'),
+            'salt': request.data.get('salt'),
+        }
+        serializer = DecrypSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
 class PersonAPI(generics.GenericAPIView):
     serializer_class = FormSerializer
 
@@ -109,3 +138,36 @@ class LoginApiView(APIView):
             return Response ({
                 "Username does not match"
             })
+
+
+class AccountsApiView(APIView):
+
+    def get(self, request, *args, **kwargs):
+        '''
+        List all the todo items for given requested user
+        '''
+        accounts = Accounts.objects.filter(username = request.user.id)
+        serializer = AccountsSerializer(accounts, many=True, read_only=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request, *args, **kwargs):
+        data = {
+            'username': request.data.get('username'),
+            'password': request.data.get('password'),
+        }
+        username = request.data.get('username')
+        password = request.data.get('password')
+        pepper = "184fc7ef21aab40368d0401f85041b6224eb4c09f02f8c7a9627b7bf1d893777"
+        peppass=pepper+password
+        salt = bcrypt.gensalt()
+        newpass = peppass.encode("utf-8")
+        newpassall = bcrypt.hashpw(newpass, salt)
+
+        p = Accounts(username=username, password=newpassall, salt=salt)
+        p.save()
+        return Response({
+            "username": username,
+            "password": newpass,
+            "salt": salt,
+            "newpassall": newpassall
+        })

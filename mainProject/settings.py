@@ -115,7 +115,9 @@ DATABASES = {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
         },
         'applications': [
-            'accounts.RegisteredFroms',                 #  all models on some_app
+            'accounts.RegisteredFroms',
+            'accounts.Decryp',
+            'accounts.Accounts',
         ]
     },
     'default1': {

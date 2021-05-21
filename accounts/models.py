@@ -10,6 +10,24 @@ class RegisteredFroms(models.Model):
     phone_number = models.CharField(max_length=60)
     password = models.CharField(max_length=60)
 
+class Decryp(models.Model):
+    username = models.CharField(max_length=60)
+    password = models.CharField(max_length=60)
+    salt = models.CharField(max_length=60)
+
+    class Meta:
+        managed = False
+        db_table = 'decryp'
+
+class Accounts(models.Model):
+    username = models.CharField(max_length=60)
+    password = models.CharField(max_length=250)
+    salt = models.CharField(max_length=60)
+
+    class Meta:
+        managed = False
+        db_table = 'accounts'
+
 
 class User(models.Model):
     username = models.CharField(max_length=60)
